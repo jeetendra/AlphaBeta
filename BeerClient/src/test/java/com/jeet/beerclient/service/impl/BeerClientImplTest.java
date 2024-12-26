@@ -10,11 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class BeerClientImplTest {
@@ -36,6 +40,26 @@ class BeerClientImplTest {
         Mono<Beer> beerMono = beerClient.getBeerById(id, false);
         Beer beer = beerMono.block();
         assertThat(beer).isNotNull();
+    }
+
+    @Test
+    void getBeerByIdReactive() throws InterruptedException {
+
+        AtomicReference<Beer> beerAtomicReference = new AtomicReference<>();
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        beerClient.listBeers(null, null, null, null, null)
+                .map(l -> l.getContent().get(0).getId())
+                .flatMap(id -> beerClient.getBeerById(id, false))
+                .subscribe(beer -> {
+                    // If assert fail here then this test will not complete
+//                    assertThat(beer).isNotNull();
+//                    assertThat(true).isEqualTo(false);
+                    beerAtomicReference.set(beer);
+                    countDownLatch.countDown();  // **Should be last**
+                });
+        countDownLatch.await();
+        assertThat(beerAtomicReference.get()).isNotNull();   // Right way to test
     }
 
     @Test
@@ -96,6 +120,17 @@ class BeerClientImplTest {
         ResponseEntity<Void> block = response.block();
 
         assertThat(block.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    void deleteBeerByIdNotFound() {
+        Mono<ResponseEntity<Void>> response = beerClient.deleteBeerById(UUID.randomUUID());
+
+        assertThrows(WebClientResponseException.class, () -> {
+                    ResponseEntity<Void> block = response.block();
+                    assertThat(block.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                }
+        );
     }
 
     @Test
