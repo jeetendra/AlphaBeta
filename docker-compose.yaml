@@ -6,10 +6,10 @@ services:
     container_name: mongodb-container
     ports:
       - "27017:27017" # Exposing MongoDB default port
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin  # Root username
-      MONGO_INITDB_ROOT_PASSWORD: password123  # Root password
-      MONGO_INITDB_DATABASE: mydatabase # Optional default database
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: admin  # Root username
+#      MONGO_INITDB_ROOT_PASSWORD: password123  # Root password
+#      MONGO_INITDB_DATABASE: alphadatabase # Optional default database
     volumes:
       - mongodb-data:/data/db # Mounting data volume for persistence
     networks:

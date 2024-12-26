@@ -69,6 +69,12 @@
 			<artifactId>mongodb</artifactId>
 			<scope>test</scope>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>io.netty</groupId>-->
+<!--			<artifactId>netty-resolver-dns-native-macos</artifactId>-->
+<!--			<version>${netty.version}</version> &lt;!&ndash; Match your Netty version &ndash;&gt;-->
+<!--			<classifier>osx-x86_64</classifier> &lt;!&ndash; Native library for macOS &ndash;&gt;-->
+<!--		</dependency>-->
 	</dependencies>
 
 	<build>
