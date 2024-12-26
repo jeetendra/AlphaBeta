@@ -1,0 +1,86 @@
+services:
+
+  mongodb:
+    image: mongo
+    restart: always
+    container_name: mongodb-container
+    ports:
+      - "27017:27017" # Exposing MongoDB default port
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin  # Root username
+      MONGO_INITDB_ROOT_PASSWORD: password123  # Root password
+      MONGO_INITDB_DATABASE: mydatabase # Optional default database
+    volumes:
+      - mongodb-data:/data/db # Mounting data volume for persistence
+    networks:
+      - app-network
+
+  mysql-db:
+    image: mysql
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app-db
+      MYSQL_USER: root-user
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  web-app :
+    container_name: web-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: mysql-db
+      DB_PORT: 3306
+      DB_NAME: app-db
+      DB_USER: root-user
+      DB_PASSWORD: 123456
+      KAFKA_ENDPOINT: kafka-server:9094
+    depends_on:
+      - mysql-db
+      - kafka
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: kafka-server
+    ports:
+      - '9092:9092'
+      - '9094:9094'
+    volumes:
+      - kafka_data:/bitnami/kafka
+    networks:
+      - app-network
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://kafka-server:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-server:9092,EXTERNAL://kafka-server:9094
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+
+
+volumes:
+  mongodb-data:
+    driver: local
+  kafka_data:
+    driver: local
+  db-data:
+
+networks:
+  app-network:
+
+
+
