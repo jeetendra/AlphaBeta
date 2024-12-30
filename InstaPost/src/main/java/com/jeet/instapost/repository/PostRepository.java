@@ -20,7 +20,6 @@ public interface PostRepository extends CrudRepository<Post, Long>, PagingAndSor
 
     @Query("""
             select p from Post p join p.comments
-                        where true 
             """)
     List<Post> findAllWithComments();
 

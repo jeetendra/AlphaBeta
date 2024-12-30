@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Builder
 @Data
@@ -22,9 +23,10 @@ public class Post {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostComment> comments = new ArrayList<>();
+    private List<PostComment> comments;
 
     public PostRecord toPostRecord() {
-        return new PostRecord(id, title, content, comments.stream().map(el -> el.toPostCommentRecord()).toList());
+        return new PostRecord(id, title, content,
+                Objects.isNull(comments) ? List.of() : comments.stream().map(el -> el.toPostCommentRecord()).toList());
     }
 }

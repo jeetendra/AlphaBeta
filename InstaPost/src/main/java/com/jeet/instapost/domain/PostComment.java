@@ -14,14 +14,14 @@ public class PostComment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title;
+
+    private String review;
+
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
-
-    private String title;
-
-    private String review;
 
     public PostCommentRecord toPostCommentRecord() {
         return new PostCommentRecord(id, title, review);
