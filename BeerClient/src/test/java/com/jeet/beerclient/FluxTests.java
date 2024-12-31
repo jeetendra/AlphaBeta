@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 public class FluxTests {
@@ -58,5 +59,20 @@ public class FluxTests {
     @Test
     void test6() {
         Mono.fromSupplier(() -> "Hello").subscribe(System.out::println, e -> System.out.println("Error: "));
+    }
+
+
+
+    @Test
+    void test7() {
+        // Completebale futute is not lazy and will execute function immediately
+        CompletableFuture<String> stringCompletableFuture = CompletableFuture.supplyAsync(() -> "Hello");
+        Mono.fromFuture(stringCompletableFuture).subscribe(System.out::println, e -> System.out.println("Error: "));
+
+
+        // below future will execure on subscribe
+        Mono<String> stringMono = Mono.fromFuture(() -> {
+            return CompletableFuture.supplyAsync(() -> "Hello");
+        });
     }
 }
