@@ -1,5 +1,7 @@
 package com.jeet;
 
+import reactor.core.publisher.Flux;
+
 /**
  * Hello world!
  *
@@ -8,6 +10,8 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        Flux<String> just = Flux.just("Hello", "World");
+
+        just.subscribe(System.out::println);
     }
 }
