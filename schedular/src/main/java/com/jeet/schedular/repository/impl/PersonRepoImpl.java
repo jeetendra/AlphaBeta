@@ -27,7 +27,7 @@ public class PersonRepoImpl implements PersonRepo {
 
     @Override
     public Flux<Person> findAll() {
-        return Flux.just(persons.toArray(new Person[0]));
+        return Flux.fromIterable(persons);
     }
 
     @Override

@@ -77,7 +77,7 @@ class PersonRepoImplTest {
         listMono.subscribe(list -> {
             list.forEach(System.out::println);
         });
-        StepVerifier.create(listMono).expectNextCount(3).verifyComplete();
+        StepVerifier.create(listMono).expectNextCount(1).verifyComplete();
     }
 
     @Test
