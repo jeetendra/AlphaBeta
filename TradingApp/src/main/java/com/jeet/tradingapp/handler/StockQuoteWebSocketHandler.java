@@ -4,13 +4,13 @@ import com.jeet.tradingapp.model.StockQuote;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Component
+@Service
 public class StockQuoteWebSocketHandler implements WebSocketHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(StockQuoteWebSocketHandler.class);
@@ -21,7 +21,7 @@ public class StockQuoteWebSocketHandler implements WebSocketHandler {
         this.stockQuoteFlux = stockQuoteFlux;
     }
 
-//    Code to debug Kafka
+    //    Code to debug Kafka
     @PostConstruct
     public void checkKafka() {
 //        if (stockQuoteFlux != null) {
@@ -45,7 +45,7 @@ public class StockQuoteWebSocketHandler implements WebSocketHandler {
                 stockQuoteFlux
                         .doOnNext(quote -> logger.info("Received from Kafka: {}", quote))
                         .map(
-                quote -> session.textMessage(quote.toString())
-        )).then();
+                                quote -> session.textMessage(quote.toString())
+                        )).then();
     }
 }

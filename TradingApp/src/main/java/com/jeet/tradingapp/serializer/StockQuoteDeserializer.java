@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-@Component
+
 public class StockQuoteDeserializer implements Deserializer<StockQuote> {
 
     private static final Logger logger = LoggerFactory.getLogger(StockQuoteDeserializer.class);
@@ -26,7 +26,6 @@ public class StockQuoteDeserializer implements Deserializer<StockQuote> {
 
     @Override
     public StockQuote deserialize(String topic, byte[] data) {
-        System.out.println("StockQuote deserialized");
         if (data == null) {
             return null; // Handle null data gracefully
         }

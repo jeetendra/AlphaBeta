@@ -1,7 +1,6 @@
 package com.jeet.tradingapp.config;
 
 import com.jeet.tradingapp.model.StockQuote;
-import com.jeet.tradingapp.serializer.StockQuoteDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
