@@ -1,12 +1,15 @@
 package com.jeet.tradingapp.config;
 
 import com.jeet.tradingapp.handler.StockQuoteWebSocketHandler;
+import com.jeet.tradingapp.handler.WSHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +26,20 @@ public class WebSocketConfig {
         mapping.setUrlMap(map);
         mapping.setOrder(10);
         return mapping;
+    }
+
+    @Bean
+    public HandlerMapping wsHandlerMappingRoot(WSHandler webSocketHandler) {
+        System.out.println("Handler Mapping called X");
+        Map<String, WebSocketHandler> map = new HashMap<>();
+        map.put("/tempo", webSocketHandler);
+//        map.put("/tempo", session -> {
+//            return session.send(Flux.just("apple").map(session::textMessage)).then();
+//        });
+        SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
+        handlerMapping.setOrder(2); // Important for WebSocket handling
+        handlerMapping.setUrlMap(map);
+        return handlerMapping;
     }
 
     @Bean
@@ -48,4 +65,6 @@ public class WebSocketConfig {
         System.out.println("Handler Adapter called");
         return new WebSocketHandlerAdapter();
     }
+
+
 }

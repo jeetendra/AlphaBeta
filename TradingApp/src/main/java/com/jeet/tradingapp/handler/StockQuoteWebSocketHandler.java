@@ -40,7 +40,6 @@ public class StockQuoteWebSocketHandler implements WebSocketHandler {
 
     @Override
     public Mono<Void> handle(WebSocketSession session) {
-        System.out.println("OOOOOOOOOO");
         return session.send(
                 stockQuoteFlux
                         .doOnNext(quote -> logger.info("Received from Kafka: {}", quote))
