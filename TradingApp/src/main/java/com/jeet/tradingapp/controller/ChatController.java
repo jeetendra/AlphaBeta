@@ -1,25 +1,40 @@
 package com.jeet.tradingapp.controller;
 
 import com.jeet.tradingapp.handler.WSHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-@Configuration
+
 @RestController()
-public class TradeController {
+public class ChatController {
 
-    @Autowired
-    private WSHandler wsHandler;
+    private final WSHandler wsHandler;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @PostMapping("/api/trigger")
-    public Mono<String> triggerWebSocketMessage(@RequestParam(required = false) String message, @RequestParam(required = false) String sessionId) {
-        return wsHandler.triggerMessage(message, sessionId);
+    private static final String CHAT_TOPIC = "chit-chat";
+
+    public ChatController(WSHandler wsHandler, KafkaTemplate<String, String> kafkaTemplate) {
+        this.wsHandler = wsHandler;
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    @PostMapping("/api/message")
+    public Mono<Void> sendMessage(@RequestParam(required = false) String message, @RequestParam(required = false) String sessionId) {
+        kafkaTemplate.send(CHAT_TOPIC, message);
+        return Mono.empty();
+    }
+
+    @KafkaListener(topics = CHAT_TOPIC, groupId = "char.receiver")
+    public void listen(@Payload String message) {
+        // TODO:save message here
+        wsHandler.triggerMessage(message, null);
     }
 
     @GetMapping(value = "/ws", produces = MediaType.TEXT_HTML_VALUE)
