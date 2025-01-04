@@ -1,14 +1,15 @@
 services:
   postgres:
-    image: postgres:15 # Use a specific version for consistency
+    image: postgres:15
     ports:
-      - "5432:5432" # Expose port for external access (optional)
+      - "5432:5432"
     environment:
       POSTGRES_USER: root-user
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: chatdb
     volumes:
       - postgres_data:/var/lib/postgresql/data
+# psql "postgresql://root-user:123456@localhost:5432/chatdb"
 
   mongodb:
     image: mongo

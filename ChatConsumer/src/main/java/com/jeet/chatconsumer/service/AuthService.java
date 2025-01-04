@@ -1,6 +1,7 @@
 package com.jeet.chatconsumer.service;
 
 import com.jeet.chatconsumer.dto.LoginResponse;
+import com.jeet.chatconsumer.dto.UserDto;
 import com.jeet.chatconsumer.model.User;
 import com.jeet.chatconsumer.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
@@ -30,18 +31,37 @@ public class AuthService {
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .map(user -> {
                     String token = generateToken(user);
-                    return new LoginResponse(token, user);
+                    return new LoginResponse(token, convertToDto(user));
                 })
                 .switchIfEmpty(Mono.error(new RuntimeException("Invalid credentials")));
     }
 
-    public Mono<User> register(User user) {
-        return userRepository.findByEmail(user.getEmail())
-                .flatMap(existingUser -> Mono.<User>error(new RuntimeException("Email already exists")))
-                .switchIfEmpty(Mono.defer(() -> {
-                    user.setPassword(passwordEncoder.encode(user.getPassword()));
-                    return userRepository.save(user);
-                }));
+    private UserDto convertToDto(User user) {
+        return new UserDto(
+                user.getId(),
+                user.getEmail(),
+                user.getUsername(),
+                user.getAvatarUrl(),
+                user.getCreatedAt()
+        );
+    }
+
+    public Mono<UserDto> findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(this::convertToDto);
+    }
+
+    public Mono<UserDto> saveUser(User user) {
+        user.setId(null);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user).map(this::convertToDto);
+    }
+
+    public Mono<UserDto> register(User user) {
+        return findUserByEmail(user.getEmail())
+                .log("register")
+                .flatMap(existingUser -> Mono.<UserDto>error(new RuntimeException("Email already exists")))
+                .switchIfEmpty(Mono.defer(() -> saveUser(user)));
     }
 
     private String generateToken(User user) {
