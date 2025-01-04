@@ -1,0 +1,77 @@
+
+###. Register user 1
+POST http://localhost:9090/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "jeet1@test.com",
+  "username": "jeet",
+  "password": "123456",
+  "avatarUrl": ""
+}
+
+> {% client.global.set("user1", response.body.id); %}
+
+###. Register user 2
+POST http://localhost:9090/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "james@test.com",
+  "username": "james",
+  "password": "123456",
+  "avatarUrl": ""
+}
+
+> {% client.global.set("user2", response.body.id); %}
+
+<> 2025-01-04T234226.200.json
+<> 2025-01-04T211153.200.json
+<> 2025-01-04T211031.200.json
+<> 2025-01-04T205116.200.json
+<> 2025-01-04T204922.200.json
+<> 2025-01-04T204824.500.json
+
+###
+POST http://localhost:9090/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "jeet1@test.com",
+  "password": "123456"
+}
+
+> {% client.global.set("auth_token", response.body.token); %}
+
+<> 2025-01-04T224919.200.json
+<> 2025-01-04T224730.200.json
+<> 2025-01-04T212135.200.json
+<> 2025-01-04T211215.200.json
+
+###
+POST http://localhost:9090/api/groups
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "My Group",
+  "participantIds": []
+}
+
+> {% client.global.set("group_id", response.body.id); %}
+
+<> 2025-01-04T233744.200.json
+<> 2025-01-04T233648.200.json
+<> 2025-01-04T233450.200.json
+<> 2025-01-04T231147.500.json
+
+###
+POST http://localhost:9090/api/groups/{{group_id}}/participants
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+[
+  "d9f09002-de19-4acb-9418-bd4fccc40879", "593275b7-c580-419a-a4db-c9e3e7cd6c22"
+]
+
+<> 2025-01-04T234541.500.json
