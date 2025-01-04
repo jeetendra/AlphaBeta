@@ -1,7 +1,9 @@
 package com.jeet.chatconsumer.model;
 
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
@@ -14,5 +16,7 @@ public class Chat {
     private UUID id;
     private String name;
     private boolean isGroup;
+    @CreatedDate
+    @Column("created_at")
     private Instant createdAt;
 }

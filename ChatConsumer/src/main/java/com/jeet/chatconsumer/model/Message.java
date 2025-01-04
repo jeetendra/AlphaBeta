@@ -1,7 +1,9 @@
 package com.jeet.chatconsumer.model;
 
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.Instant;
@@ -16,5 +18,7 @@ public class Message {
     private UUID senderId;
     private String content;
     private String mediaUrl;
+    @CreatedDate
+    @Column("created_at")
     private Instant createdAt;
 }
