@@ -75,3 +75,15 @@ Authorization: Bearer {{auth_token}}
 ]
 
 <> 2025-01-04T234541.500.json
+
+###
+
+###
+POST http://localhost:9090/api/chats/d1566295-f55c-4654-b029-70f626f405a7/messages
+Content-Type: application/json
+X-User-Id: 593275b7-c580-419a-a4db-c9e3e7cd6c22
+Authorization: Bearer {{auth_token}}
+
+{
+  "content": "Hello, this is a test message."
+}
