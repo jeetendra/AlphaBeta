@@ -7,9 +7,9 @@ export const authGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authService.getCurrentUser().pipe(
-    map(user => {
-      if (user) {
+  return authService.isAuthenticated().pipe(
+    map(isAuthenticated => {
+      if (isAuthenticated) {
         return true;
       } else {
         router.navigate(['/login']);
