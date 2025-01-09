@@ -23,12 +23,12 @@ import { ChatWindowComponent } from '../chat-window/chat-window.component';
                (click)="selectChat(chat)"
                class="p-4 border-b hover:bg-gray-50 cursor-pointer">
             <div class="flex items-center">
-              <div *ngIf="chat.is_group" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+              <div *ngIf="chat.group" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                 <span class="text-sm">{{ chat.name?.charAt(0) }}</span>
               </div>
               <div class="ml-3">
-                <p class="font-medium">{{ chat.is_group ? chat.name : chat.participants[0].username }}</p>
-                <p class="text-sm text-gray-500">{{ chat.last_message?.content }}</p>
+                <p class="font-medium">{{ chat.group ? chat.name : chat.participants[0].username }}</p>
+<!--                <p class="text-sm text-gray-500">{{ chat.last_message?.content }}</p>-->
               </div>
             </div>
           </div>

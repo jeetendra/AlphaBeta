@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../environment';
 import { Chat, Message } from '../models/chat.model';
@@ -29,10 +29,18 @@ export class ChatService {
   }
 
   getChats(): Observable<Chat[]> {
-    return this.http.get<Chat[]>(`${this.apiUrl}/chats`);
+    const userId = localStorage.getItem("user_id") || "";
+    const headers = new HttpHeaders({
+      'X-User-Id': userId, // Set the X-User-Id header
+      'Content-Type': 'application/json', // If you're sending JSON data
+      // Add other headers as needed
+    });
+
+    return this.http.get<Chat[]>(`${this.apiUrl}/chats`, {headers});
   }
 
   getMessages(chatId: string): Observable<Message[]> {
+
     return this.http.get<Message[]>(`${this.apiUrl}/chats/${chatId}/messages`);
   }
 
