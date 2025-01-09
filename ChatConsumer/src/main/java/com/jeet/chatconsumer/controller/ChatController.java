@@ -29,10 +29,7 @@ public class ChatController {
     }
 
     @PostMapping("/{chatId}/messages")
-    public Mono<Message> sendMessage(
-            @PathVariable UUID chatId,
-            @RequestBody ChatMessage message,
-            @RequestHeader("X-User-Id") UUID senderId) {
+    public Mono<Message> sendMessage(@PathVariable UUID chatId, @RequestBody ChatMessage message, @RequestHeader("X-User-Id") UUID senderId) {
         return chatService.sendMessage(chatId, message.getContent(), message.getMediaUrl(), senderId);
     }
 

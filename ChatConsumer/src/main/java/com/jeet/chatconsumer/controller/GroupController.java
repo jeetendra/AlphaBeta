@@ -23,16 +23,12 @@ public class GroupController {
     }
 
     @PostMapping("/{chatId}/participants")
-    public Mono<Void> addParticipants(
-            @PathVariable UUID chatId,
-            @RequestBody Set<UUID> participantIds) {
+    public Mono<Void> addParticipants(@PathVariable UUID chatId, @RequestBody Set<UUID> participantIds) {
         return groupService.addParticipants(chatId, participantIds);
     }
 
     @DeleteMapping("/{chatId}/participants/{userId}")
-    public Mono<Void> removeParticipant(
-            @PathVariable UUID chatId,
-            @PathVariable UUID userId) {
+    public Mono<Void> removeParticipant(@PathVariable UUID chatId, @PathVariable UUID userId) {
         return groupService.removeParticipant(chatId, userId);
     }
 }
