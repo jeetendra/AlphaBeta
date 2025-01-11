@@ -61,7 +61,7 @@ export class LoginComponent {
     try {
       const response = await firstValueFrom(this.authService.login(this.email, this.password));
       const token = response.token; // Assuming the response contains a token
-      localStorage.setItem('auth-_token', token);
+      localStorage.setItem('auth_token', token);
       localStorage.setItem('user_id' , response.user.id);
       this.router.navigate(['/chats']);
     } catch (error) {

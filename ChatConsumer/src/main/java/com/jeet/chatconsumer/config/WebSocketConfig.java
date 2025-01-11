@@ -13,7 +13,8 @@ import java.util.Map;
 @Configuration
 public class WebSocketConfig {
     @Bean
-    public HandlerMapping webSocketHandlerMapping(ChatWebSocketHandler chatHandler) {
+    public HandlerMapping webSocketHandlerMapping(ChatWebSocketHandler  chatHandler) {
+        System.out.println("WS MAPPING");
         Map<String, WebSocketHandler> map = new HashMap<>();
         map.put("/ws/chat", chatHandler);
 

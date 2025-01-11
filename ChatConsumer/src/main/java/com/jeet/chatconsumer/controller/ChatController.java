@@ -2,6 +2,7 @@ package com.jeet.chatconsumer.controller;
 
 
 import com.jeet.chatconsumer.dto.ChatMessage;
+import com.jeet.chatconsumer.handler.ChatWebSocketHandler;
 import com.jeet.chatconsumer.model.Chat;
 import com.jeet.chatconsumer.model.Message;
 import com.jeet.chatconsumer.service.ChatService;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
+    private final ChatWebSocketHandler wsHandler;
 
     @GetMapping
     public Flux<Chat> getUserChats(@RequestHeader("X-User-Id") UUID userId) {
@@ -30,6 +32,7 @@ public class ChatController {
 
     @PostMapping("/{chatId}/messages")
     public Mono<Message> sendMessage(@PathVariable UUID chatId, @RequestBody ChatMessage message, @RequestHeader("X-User-Id") UUID senderId) {
+        wsHandler.triggerMessage(message.getContent(), null);
         return chatService.sendMessage(chatId, message.getContent(), message.getMediaUrl(), senderId);
     }
 

@@ -10,7 +10,9 @@ export class WebSocketService {
   private socket$: WebSocketSubject<any>;
 
   constructor() {
+    const token = localStorage.getItem("auth_token")
     this.socket$ = webSocket(environment.wsUrl);
+
   }
 
   connect() {

@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '../environment';
-import { Chat, Message } from '../models/chat.model';
-import { WebSocketService } from './websocket.service';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {environment} from '../environment';
+import {Chat, Message} from '../models/chat.model';
+import {WebSocketService} from './websocket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -45,8 +45,15 @@ export class ChatService {
   }
 
   async sendMessage(chatId: string, content: string, mediaUrl?: string): Promise<void> {
-    const message = { chatId, content, mediaUrl };
-    this.wsService.sendMessage(message);
+    const message = {chatId, content, mediaUrl};
+    const userId = localStorage.getItem("user_id") || "";
+    const headers = new HttpHeaders({
+      'X-User-Id': userId, // Set the X-User-Id header
+      'Content-Type': 'application/json', // If you're sending JSON data
+      // Add other headers as needed
+    });
+    // this.wsService.sendMessage(message);
+    return this.http.post<void>(`${this.apiUrl}/chats/${chatId}/messages`, message, {headers}).toPromise()
   }
 
   uploadMedia(file: File): Observable<string> {
