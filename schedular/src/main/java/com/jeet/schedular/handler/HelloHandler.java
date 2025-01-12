@@ -32,4 +32,16 @@ public class HelloHandler {
                 ));
     }
 
+    public Mono<ServerResponse> sayHelloWithQP(ServerRequest request) {
+        String name = request.queryParam("name").orElse("Guest");
+        return ServerResponse.ok()
+                .contentType(MediaType.TEXT_EVENT_STREAM)
+                .body(BodyInserters.fromPublisher(
+                        Flux.interval(Duration.ofMillis(2000))
+                                .take(5)
+                                .map(i -> "Hello" + name),
+                        String.class
+                ));
+    }
+
 }
