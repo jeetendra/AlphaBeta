@@ -4,6 +4,7 @@ import com.jeet.schedular.dto.Filter;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -11,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Set;
 
+@Slf4j
 @Component
 public class ValidationHandler {
 
@@ -31,6 +33,7 @@ public class ValidationHandler {
                 }
                 return ServerResponse.ok().bodyValue("Valid age: " + ageValue);
             } catch (NumberFormatException e) {
+                log.info("Error occurred: {}", e.getMessage(), e);
                 return ServerResponse.badRequest().bodyValue("Age must be a valid integer.");
             }
         }).orElse(ServerResponse.badRequest().bodyValue("Missing required parameter: age."));
