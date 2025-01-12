@@ -1,5 +1,6 @@
 package com.jeet.schedular.config;
 
+import com.jeet.schedular.handler.FileUploadHandler;
 import com.jeet.schedular.handler.HelloHandler;
 import com.jeet.schedular.handler.UserHandler;
 import com.jeet.schedular.handler.ValidationHandler;
@@ -35,4 +36,10 @@ public class HelloRouter {
         return RouterFunctions.route(POST("/api/users"), handler::createUser);
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> fileUploadRoute(FileUploadHandler handler) {
+        return RouterFunctions.route(POST("/api/files/upload"), handler::handleFileUpload)
+                .andRoute(POST("/api/files/upload2"), handler::handleLargeFileUpload)
+                .andRoute(GET("/download"), handler::downloadFile);
+    }
 }
