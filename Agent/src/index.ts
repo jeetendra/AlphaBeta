@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { StructuredToolParams } from "@langchain/core/tools";
 import { ChatOllama } from "@langchain/ollama";
-import { HumanMessage, ToolMessage } from "@langchain/core/messages";
+import { HumanMessage, ToolMessage, SystemMessage } from "@langchain/core/messages";
 import { tool } from "@langchain/core/tools";
 
 const weatherToolSchema: StructuredToolParams = {
@@ -27,37 +27,31 @@ const toolsByName = {
 };
 
 const llm = new ChatOllama({
-  model: "llama3.2",
-  temperature: 0,
-  maxRetries: 2,
+    model: "llama3.2",
+    temperature: 0,
+    maxRetries: 2,
 });
 
 const llmWithTools = llm.bindTools([weatherTool]);
 
 async function main() {
-    
-    const messages = [new HumanMessage("how is the weather in gurgaon haryana?")];
+
+    const messages = [
+        new SystemMessage("Give short answer only."),
+        new HumanMessage("how is the weather in gurgaon haryana?")
+    ];
 
     const aiMessage = await llmWithTools.invoke(messages);
-    console.log(aiMessage);
-
     messages.push(aiMessage);
-    if(aiMessage?.tool_calls) {
+    if (aiMessage?.tool_calls) {
         for (const toolCall of aiMessage.tool_calls) {
             const selectedTool = toolsByName[toolCall.name];
             const toolMessage = await selectedTool.invoke(toolCall);
-            // const toolMessage = new ToolMessage({
-            //     tool_call_id: toolCall.id,
-            //     status: "success",
-            //     content: "its 10 degree c"
-            // })
             messages.push(toolMessage);
         }
         const answer = await llmWithTools.invoke(messages);
-        console.log("##")
-        console.log(answer);
+        console.log(answer.content);
     }
-    
 }
 
 main();
