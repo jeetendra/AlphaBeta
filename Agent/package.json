@@ -1,10 +1,9 @@
 {
   "name": "agent",
   "version": "0.1.0",
-  "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/main.js"
+    "start": "ts-node ./src/main.ts"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +13,8 @@
     "@types/node": "^22.10.5",
     "ollama": "^0.5.11",
     "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
   }
 }
