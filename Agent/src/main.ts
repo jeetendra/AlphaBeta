@@ -1,29 +1,8 @@
-import ollama from 'ollama';
+import ollama, {ChatResponse} from 'ollama';
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
-import { getCurrentTime, searchWikipedia, addNumbers } from './tools';
+import { toolsRefs, tools} from './tools';
 
-type FunctionRef = {
-    [key: string]: (...args: any[]) => any;
-};
-var functions: FunctionRef = {
-    "getCurrentTime": getCurrentTime,
-    "searchWikipedia": searchWikipedia,
-    "addNumbers": addNumbers
-}
-
-interface Tool {
-    name: string; 
-    arguments: string[]
-}
-
-const snakeToCamel = (str: string) =>
-    str.toLowerCase().replace(/([-_][a-z])/g, group =>
-      group
-        .toUpperCase()
-        .replace('-', '')
-        .replace('_', '')
-    );
 
 async function runAgent(model: string): Promise<void> {
   const rl = readline.createInterface({ input, output });
@@ -41,76 +20,24 @@ async function runAgent(model: string): Promise<void> {
     conversationHistory.push({ role: 'user', content: userInput });
 
     try {
-      const response = await ollama.chat({
+      const response: ChatResponse = await ollama.chat({
         model: model,
         messages: conversationHistory,
-        tools: [
-            {
-                type: "function",
-                function: {
-                    name: "get_current_time",
-                    description: "Gets the current time.",
-                    parameters: {
-                        type: "object",
-                        required: [],
-                        properties: {}
-                    }
-                }
-            },
-            {
-                type: "function",
-                function: {
-                    name: "search_wikipedia",
-                    description: "Searches Wikipedia for a given query.",
-                    parameters: {
-                        type: "object",
-                        required: ["query"],
-                        properties: {
-                            query: {
-                                type: "string",
-                                description: "The search query.",
-                            },
-                        },
-                    }
-                }
-            },
-            {
-                type: "function",
-                function: {
-                    name: "add_numbers",
-                    description: "Adds two numbers",
-                    parameters: {
-                        type: "object",
-                        required: ["a", "b"],
-                        properties: {
-                            a: {
-                                type: "number",
-                                description: "The first number."
-                            },
-                            b: {
-                                type: "number",
-                                description: "The second number."
-                            }
-                        }
-                    }
-                }
-            }
-        ]
+        tools: tools
       });
 
       if (response?.message?.content) {
         console.log(`Agent: ${response.message.content}`);
         conversationHistory.push({ role: 'assistant', content: response.message.content });
       } else if(response["message"]["tool_calls"]) {
-        const tools = response["message"]["tool_calls"][0]["function"] as Tool;
-        const functionName: string = snakeToCamel(tools["name"]);
-        
-        const funct = functions[functionName];
-        console.log(funct);
+        const toolCall = response["message"]["tool_calls"][0];
 
-        var val = await funct.apply(null, tools["arguments"]);
+        
+        console.log(toolCall.function.name);
+        const funct = toolsRefs[toolCall.function.name];
+        
+        var val = await funct.call(null, toolCall.function.arguments);
         console.log({val});
-        console.log(tools["arguments"]);
       } else {
         console.error("Unexpected response format:", response);
       }

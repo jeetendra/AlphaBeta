@@ -1,3 +1,5 @@
+import {Tool} from 'ollama';
+
 interface WikipediaResponse {
     query: {
         pages: {
@@ -33,6 +35,69 @@ export async function searchWikipedia(query: string): Promise<string> {
 }
 
 // Example of a synchronous tool
-export function addNumbers(a: number, b: number): number {
+export function addNumbers({a, b}: {a:number, b: number}): number {
     return a + b;
 }
+
+type FunctionRef = {
+    [key: string]: (...args: any[]) => any;
+};
+
+export const toolsRefs: FunctionRef = {
+    "getCurrentTime": getCurrentTime,
+    "searchWikipedia": searchWikipedia,
+    "addNumbers": addNumbers
+}
+
+export const tools: Tool[] = [
+  {
+      type: "function",
+      function: {
+          name: "getCurrentTime",
+          description: "Gets the current time.",
+          parameters: {
+              type: "object",
+              required: [],
+              properties: {}
+          }
+      }
+  },
+  {
+      type: "function",
+      function: {
+          name: "searchWikipedia",
+          description: "Searches Wikipedia for a given query.",
+          parameters: {
+              type: "object",
+              required: ["query"],
+              properties: {
+                  query: {
+                      type: "string",
+                      description: "The search query.",
+                  },
+              },
+          }
+      }
+  },
+  {
+      type: "function",
+      function: {
+          name: "addNumbers",
+          description: "Adds two numbers",
+          parameters: {
+              type: "object",
+              required: ["a", "b"],
+              properties: {
+                  a: {
+                      type: "number",
+                      description: "The first number."
+                  },
+                  b: {
+                      type: "number",
+                      description: "The second number."
+                  }
+              }
+          }
+      }
+  }
+];
