@@ -3,6 +3,9 @@ import { StructuredToolParams } from "@langchain/core/tools";
 import { ChatOllama } from "@langchain/ollama";
 import { HumanMessage, ToolMessage, SystemMessage } from "@langchain/core/messages";
 import { tool } from "@langchain/core/tools";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { StructuredOutputParser } from "@langchain/core/output_parsers";
 
 const weatherToolSchema: StructuredToolParams = {
     name: "getCurrentWeather",
@@ -49,8 +52,25 @@ async function main() {
             const toolMessage = await selectedTool.invoke(toolCall);
             messages.push(toolMessage);
         }
-        const answer = await llmWithTools.invoke(messages);
-        console.log(answer.content);
+        // const answer = await llmWithTools.invoke(messages);
+        // console.log(answer.content);
+
+        const parser = new StringOutputParser();
+
+        const jsonParser = StructuredOutputParser.fromNamesAndDescriptions(
+            {
+                name: "Name of the city",
+                temperature: "Temperature of the city"
+            }
+        )
+
+        const prompt = ChatPromptTemplate.fromMessages(messages);
+
+        const answer = await prompt.pipe(llmWithTools)
+            .pipe(parser)
+            .invoke({
+            });
+        console.log(answer);
     }
 }
 
