@@ -3,7 +3,7 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { Chroma } from "@langchain/community/vectorstores/chroma"
 
 export async function loadPDF(file: string) {
-    const loader = new PDFLoader("./extra/reactjs.pdf", {
+    const loader = new PDFLoader(file, {
         splitPages: false
     });
 
@@ -23,7 +23,7 @@ export async function splitDocs(docs) {
 
 export async function storeDataInDB(splittedDocs, embeddings) {
     const vectorStore = await Chroma.fromDocuments(splittedDocs, embeddings, {
-        collectionName: "react",
+        collectionName: process.env.COLLECTION_NAME,
         url: process.env.CHROMA_URI
     });
 

@@ -2,9 +2,13 @@ import { chromaClient } from "./lib/chromadb";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { llm, embeddings } from "./lib/llm";
 import { loadPDF, storeDataInDB, splitDocs } from "./lib/utils";
-
+import "dotenv/config";
 
 async function init() {
+
+    chromaClient.deleteCollection({
+        name: process.env.COLLECTION_NAME
+    });
     const docs = await loadPDF("./extra/reactjs.pdf");
     const splittedDocs = await splitDocs(docs);
 
@@ -15,17 +19,15 @@ async function init() {
 
 async function main() {
 
-    const vectorStore = init(); // TODO: find a solution to create vercor store without loading data.
+    const vectorStore = await init(); // TODO: find a solution to create vercor store without loading data.
 
     const retriever = vectorStore.asRetriever({
         k: 2
     });
 
-    chromaClient.deleteCollection({
-        name: "my_collection"
-    });
 
-    const question = "what are react's best practice";
+
+    const question = "what should i take care while writing react code";
 
     const results = await retriever.invoke(question);
     const resultDocs = results.map(
