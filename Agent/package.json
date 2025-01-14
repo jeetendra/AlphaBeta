@@ -5,7 +5,8 @@
     "build": "tsc",
     "start": "ts-node ./src/main.ts",
     "start-lc": "ts-node ./src/index.ts",
-    "rag": "ts-node ./src/rag.ts"
+    "rag": "ts-node ./src/rag.ts",
+    "openai": "ts-node ./src/openai/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +20,7 @@
     "chromadb": "^1.10.0",
     "dotenv": "^16.4.7",
     "ollama": "^0.5.11",
+    "openai": "^4.78.1",
     "pdf-parse": "^1.1.1",
     "typescript": "^5.7.3",
     "zod": "^3.24.1"
