@@ -7,9 +7,7 @@ export async function loadPDF(file: string) {
         splitPages: false
     });
 
-    const docs = await loader.load();
-
-    return docs;
+    return await loader.load();
 }
 
 export async function splitDocs(docs) {
@@ -26,7 +24,15 @@ export async function storeDataInDB(splittedDocs, embeddings) {
         collectionName: process.env.COLLECTION_NAME,
         url: process.env.CHROMA_URI
     });
+}
 
-    await vectorStore.addDocuments(splittedDocs);
-    return vectorStore;
+export async function getReteriver(embeddings) {
+    var chroma = await Chroma.fromExistingCollection(embeddings,{
+        collectionName: process.env.COLLECTION_NAME,
+        url: process.env.CHROMA_URI
+    });
+
+    return chroma.asRetriever({
+        k: 2
+    });
 }

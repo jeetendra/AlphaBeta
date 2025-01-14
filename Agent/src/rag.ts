@@ -1,33 +1,28 @@
 import { chromaClient } from "./lib/chromadb";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { llm, embeddings } from "./lib/llm";
-import { loadPDF, storeDataInDB, splitDocs } from "./lib/utils";
+import { loadPDF, storeDataInDB, splitDocs, getReteriver } from "./lib/utils";
 import "dotenv/config";
 
-async function init() {
+async function loadDataInDb() {
 
-    chromaClient.deleteCollection({
+    await chromaClient.deleteCollection({
         name: process.env.COLLECTION_NAME
     });
     const docs = await loadPDF("./extra/reactjs.pdf");
     const splittedDocs = await splitDocs(docs);
 
-    const vectorStore = await storeDataInDB(splittedDocs, embeddings);
-    return vectorStore;
+    await storeDataInDB(splittedDocs, embeddings);
 }
 
 
 async function main() {
 
-    const vectorStore = await init(); // TODO: find a solution to create vercor store without loading data.
+    // await loadDataInDb();
 
-    const retriever = vectorStore.asRetriever({
-        k: 2
-    });
+    const retriever = await getReteriver(embeddings);
 
-
-
-    const question = "what should i take care while writing react code";
+    const question = "explain use of useMemo and useCallback";
 
     const results = await retriever.invoke(question);
     const resultDocs = results.map(
@@ -47,7 +42,6 @@ async function main() {
     });
 
     console.log(response.content);
-
 }
 
 main();
