@@ -8,7 +8,8 @@
     "rag": "ts-node ./src/rag.ts",
     "openai": "ts-node ./src/openai/index.ts",
     "openai-chat": "ts-node ./src/openai/chat.ts",
-    "openai-tools": "ts-node ./src/openai/tools-example.ts"
+    "openai-tools": "ts-node ./src/openai/tools-example.ts",
+    "agent": "ts-node ./src/openai/agent.ts"
   },
   "keywords": [],
   "author": "",
