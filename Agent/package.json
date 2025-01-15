@@ -6,7 +6,8 @@
     "start": "ts-node ./src/main.ts",
     "start-lc": "ts-node ./src/index.ts",
     "rag": "ts-node ./src/rag.ts",
-    "openai": "ts-node ./src/openai/index.ts"
+    "openai": "ts-node ./src/openai/index.ts",
+    "openai-chat": "ts-node ./src/openai/chat.ts"
   },
   "keywords": [],
   "author": "",
