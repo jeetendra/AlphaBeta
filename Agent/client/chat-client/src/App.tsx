@@ -1,33 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react"
 
 function App() {
-  const [count, setCount] = useState(0)
+  
+  const [query, setQuery] = useState("");
+  const [submit, setSubmit] = useState(false);
+  const [ response, setResponse ] = useState<string>('>>>>>');
+
+  useEffect(() => {
+    if (submit && query.length) {
+      console.log("Query submitted:", query);
+      
+      const eventSource = new EventSource('http://localhost:8001/chat?prompt=' + encodeURIComponent(query))
+
+      // Subscribe to all events streaming in
+      eventSource.onmessage = (event) => {
+        console.log(">>",event.data.trim());
+        if(event.data.trim() !== 'undefined'){
+          const newData = event.data;
+          setResponse((prevResponse) => prevResponse.concat(newData));
+        } else{
+          // close the SSE connection if the server sends an event message with data 'undefined'
+          eventSource.close();
+          
+        }
+      };
+      setQuery("");
+      setSubmit(false);
+    }
+    
+  }, [submit, query]);
+
+  const triggerQuery = () => {
+    setSubmit(true);
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div>{response}</div>
+      
+      <input 
+        value={query} 
+        onChange={(e) => setQuery(e.target.value)} 
+      /> 
+      <button onClick={triggerQuery}>Submit</button>
     </>
   )
 }
