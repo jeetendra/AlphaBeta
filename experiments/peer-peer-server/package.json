@@ -1,0 +1,14 @@
+{
+  "name": "peer-peer-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "uuid": "^11.0.5",
+    "ws": "^8.18.0"
+  }
+}
