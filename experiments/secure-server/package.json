@@ -1,0 +1,11 @@
+{
+  "name": "secure-server",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "http-server -S -C ../cert/cert.pem -K ../cert/key.pem "
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}

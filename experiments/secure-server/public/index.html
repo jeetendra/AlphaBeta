@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World</title>
+    <style>
+        #canvas {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Hello Chat</h1>
+    <video id="video"></video>
+
+    <canvas id="canvas" width="400" height="300"></canvas>
+    <canvas id="canvas2" width="400" height="300"></canvas>
+    <script>
+
+        // Client-side (JavaScript)
+        // const ws = new WebSocket('ws://localhost:8081');
+
+        // const array = new Uint8Array([1, 2, 3, 4, 5]);
+
+        // ws.onopen = () => {
+        //     console.log("Connected")
+        //     var x = {
+        //         name: "jeet"
+        //     }
+        //     ws.send(JSON.stringify(x));
+        //     ws.send(array);
+        // };
+
+        // ws.onmessage = (event) => {
+
+        //     if (event.data instanceof Blob) {
+        //         const reader = new FileReader();
+
+        //         reader.onload = (event) => {
+        //             const arrayBuffer = event.target.result;
+        //             const receivedArray = new Uint8Array(arrayBuffer);
+        //             console.log('Received array:', receivedArray);
+        //             // Process the receivedArray
+        //         };
+
+        //         reader.readAsArrayBuffer(event.data);
+        //     } else {
+        //         console.log('Received message:', event.data); // This will be a MessageEvent object
+        //     }
+        // };
+
+        // const socket = new WebSocket('ws://localhost:8081');
+        // socket.onopen = () => {
+        //     console.log("Connected")
+        //     // socket.send('Hello from client!');
+        // };
+
+        // socket.onmessage = (msg) => {
+        //     console.log("Message: ", msg)
+        // }
+
+        function stream() {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(stream => {
+                    const video = document.querySelector('#video');
+                    video.srcObject = stream;
+                    video.play();
+
+                    const canvas = document.querySelector('#canvas');
+                    const context = canvas.getContext('2d');
+                    // canvas.width = video.width;
+                    // canvas.height = video.height;
+                    const socket = new WebSocket('wss://192.168.31.211:8081');
+                    socket.onopen = () => {
+                        // socket.send('Hello from client!');
+                        console.log("Connection opened");
+
+                        function sendData() {
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            const dataURL = canvas.toDataURL('image/jpeg');
+
+                            const ctx = canvas.getContext('2d');
+                            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                            const arrayBuffer = new Uint8ClampedArray(imageData.data.buffer);
+                            // console.log(arrayBuffer);
+                            socket.send(arrayBuffer);
+                            // renderImage(arrayBuffer);
+                        }
+
+                        setInterval(() => {
+                            sendData();
+                        }, 1000);
+                        // setTimeout(sendData, 1000);
+
+                    };
+                    socket.onmessage = (event) => {
+
+                        if (event.data instanceof Blob) {
+                            const reader = new FileReader();
+
+                            reader.onload = (event) => {
+                                const arrayBuffer = event.target.result;
+                                const receivedArray = new Uint8Array(arrayBuffer);
+                                // console.log('Received array:', receivedArray);
+                                // Process the receivedArray
+                                renderImage(receivedArray);
+                            };
+                            reader.readAsArrayBuffer(event.data);
+                        }
+                        
+                    }
+                });
+        }
+
+        function renderImage(arrayBuffer) {
+            const canvas2 = document.querySelector('#canvas2');
+            const receivedImageData = new ImageData(new Uint8ClampedArray(arrayBuffer), canvas2.width, canvas2.height);
+            const ctx = canvas2.getContext('2d');
+            ctx.putImageData(receivedImageData, 0, 0);
+        }
+
+        stream();
+
+    </script>
+</body>
+
+</html>
