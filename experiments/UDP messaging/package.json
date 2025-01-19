@@ -1,0 +1,13 @@
+{
+  "name": "udp-messaging",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "server": "nodemon server.mjs",
+    "client": "nodemon client.mjs"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
