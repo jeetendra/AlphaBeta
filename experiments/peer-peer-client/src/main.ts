@@ -45,7 +45,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 
 let peer;
-const socket = new WebSocket('ws://localhost:3000');
+const socket = new WebSocket('wss://localhost:8081');
 
 // peer = new SimplePeer({
 //   initiator: location.hash === '#init',
@@ -94,9 +94,9 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     //   console.log("Hey! gotten signal data", data);
     // });
 
-    // peer.on('signal', data => {
-    //   socket.send(data);
-    // });
+    peer.on('signal', data => {
+      socket.send(data);
+    });
 
     // Handle incoming stream
     // peer.on('stream', stream => {
