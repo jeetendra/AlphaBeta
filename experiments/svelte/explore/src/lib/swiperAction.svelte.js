@@ -1,4 +1,4 @@
-import Swiper from 'swiper';
+import Swiper from 'swiper/bundle';
 import 'swiper/css/bundle';
 
 export function swiperAction(node, options) {
