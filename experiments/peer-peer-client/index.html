@@ -8,8 +8,12 @@
   </head>
   <body>
     <div id="app"></div>
-    <video id="localVideo" autoplay></video>
-    <video id="remoteVideo" autoplay></video>
+    <video id="localVideo" playsinline autoplay muted></video>
+    <video id="remoteVideo" playsinline autoplay></video>
+    <div class="box">
+      <button id="startButton">Start</button>
+      <button id="hangupButton">Hang Up</button>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
