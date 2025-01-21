@@ -13,7 +13,8 @@
     "langchain-tools": "ts-node ./src/langchain/tools-example.ts",
     "langchain-agent": "ts-node ./src/langchain/agent.ts",
 
-    "chat-server": "ts-node ./src/chat-server.ts"
+    "chat-server": "ts-node ./src/chat-server.ts",
+    "code": "ts-node ./src/code-generator/main.ts"
     
   },
   "keywords": [],
