@@ -1,25 +1,48 @@
 <script>
     let todos = $state([
-        { text: "Hello", completed: false },
-        { text: "World", completed: true },
+        {id:generateId(), text: "Hello", completed: false },
+        {id:generateId(), text: "World", completed: true },
     ]);
+
+    let editingTodo = $state({id:generateId(), text: "", completed: false });
+
+    let isEditing = $state(false);
+
+    function generateId() {
+        return window.crypto.randomUUID();
+    }
 
     function addTodo(event) {
         if (event.key !== "Enter") return;
 
-        const value = event.target.value;
-        event.target.value = "";
-        todos.push({ text: value, completed: false });
+        todos.push({...editingTodo});
+
+        // editingTodo.id = generateId();
+        // editingTodo.text = "";
+        // editingTodo.completed = false;
+        editingTodo = {id:generateId(), text: "", completed: false };
+        isEditing = false;
+    }
+
+    function editTodo(id) {
+        isEditing = true;
+        const todoToEdit = todos.find(el => el.id == id);       
+        editingTodo = {...todoToEdit};
+        todos = todos.filter(el => el.id != id);
     }
 </script>
 
 <div class="todos">
-    <input type="text" placeholder="Enter todo text" onkeydown={addTodo} />
-
-    {#each todos as todo}
+    
+    <div class="todo" >
+        <input type="text" placeholder="Enter todo text" onkeydown={addTodo} bind:value={editingTodo.text} />
+        <input type="checkbox" bind:checked={editingTodo.completed} />
+    </div>
+    {#each todos as {id, text, completed}}
         <div class="todo">
-            <input type="text" value={todo.text} />
-            <input type="checkbox" checked={todo.completed} />
+            <input readonly type="text" data-index={id} value={text} />
+            <input type="checkbox"  data-index={id} checked={completed} />
+            <button disabled={isEditing} onclick={() => editTodo(id)} >Edit</button>
         </div>
     {/each}
 </div>
