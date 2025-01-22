@@ -1,18 +1,27 @@
-
 <script>
- let todos = $state([
-    {text: "Hello", completed: false},
-    {text: "World", completed: true},
- ])
+    let todos = $state([
+        { text: "Hello", completed: false },
+        { text: "World", completed: true },
+    ]);
+
+    function addTodo(event) {
+        if (event.key !== "Enter") return;
+
+        const value = event.target.value;
+        event.target.value = "";
+        todos.push({ text: value, completed: false });
+    }
 </script>
 
 <div class="todos">
-  {#each todos as todo}
-    <div class="todo">
-        <input type="text" value="{todo.text}" />
-        <input type="checkbox" checked="{todo.completed}" />
-    </div>
-  {/each}
+    <input type="text" placeholder="Enter todo text" onkeydown={addTodo} />
+
+    {#each todos as todo}
+        <div class="todo">
+            <input type="text" value={todo.text} />
+            <input type="checkbox" checked={todo.completed} />
+        </div>
+    {/each}
 </div>
 
 <style>
@@ -25,14 +34,12 @@
 
     .todo {
         position: relative;
-        
     }
 
     input[type="text"] {
         width: 100%;
         padding: 1rem;
     }
-
 
     input[type="checkbox"] {
         position: absolute;
