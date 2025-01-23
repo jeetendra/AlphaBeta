@@ -4,12 +4,14 @@
   import Swiper from './lib/Swiper.svelte';
   import Todos from './lib/Todos.svelte';
     import Lifecycle from './lib/Lifecycle.svelte';
+    import Template from './lib/Template.svelte';
 </script>
 
 <main>
   <div class="card">
     <Counter />
   </div>
+  <Template />
   <div class="card">
     <Lifecycle />
   </div>
